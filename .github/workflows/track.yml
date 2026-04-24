@@ -1,0 +1,48 @@
+name: Antonov Tracker
+
+on:
+  # Run every 3 hours
+  schedule:
+    - cron: '0 */3 * * *'
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # Restore previous state (so we can detect changes)
+      - name: Download previous state
+        uses: actions/download-artifact@v4
+        with:
+          name: tracker-state
+          path: .
+        continue-on-error: true  # Won't exist on first run
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run tracker
+        env:
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          NOTIFY_EMAIL: ${{ secrets.NOTIFY_EMAIL }}
+        run: python track_antonov.py
+
+      # Save state for next run
+      - name: Upload state
+        uses: actions/upload-artifact@v4
+        with:
+          name: tracker-state
+          path: last_state.json
+          overwrite: true
+          retention-days: 7
