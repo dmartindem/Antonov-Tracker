@@ -20,7 +20,7 @@ SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
 EMAIL_USER = os.environ.get("EMAIL_USER", "")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "")
-NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL", "")
+NOTIFY_EMAIL = os.environ.get("NOTIFY_EMAIL", "").split(",")
 
 # Known Antonov Airlines callsign prefix (ICAO: ADB)
 ANTONOV_CALLSIGN_PREFIX = "ADB"
@@ -133,7 +133,7 @@ def build_email(subject, body_html):
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = EMAIL_USER
-    msg["To"] = NOTIFY_EMAIL
+    msg["To"] = ", ".join(NOTIFY_EMAIL)
     msg.attach(MIMEText(body_html, "html"))
     return msg
 
