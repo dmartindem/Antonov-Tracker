@@ -174,21 +174,39 @@ def format_aircraft_html(aircraft):
     status_color = "#22c55e" if aircraft['airborne'] else "#ef4444"
 
     icao24 = aircraft['icao24']
-    fr24_link = f"https://www.flightradar24.com/data/aircraft/{icao24}"
-    adsb_link = f"https://globe.adsbexchange.com/?icao={icao24}"
+    callsign = aircraft['callsign']
+    country = aircraft['origin_country']
+    fr24_link = "https://www.flightradar24.com/data/aircraft/" + icao24
+    adsb_link = "https://globe.adsbexchange.com/?icao=" + icao24
 
-    return f"""
+    html = """
     <div style="border:1px solid #ddd; border-radius:8px; padding:16px; margin:8px 0; background:#f9f9f9;">
-        <h3 style="margin:0 0 8px 0;">Callsign: {aircraft['callsign']}</h3>
-        <p style="margin:4px 0;"><strong>Status:</strong> <span style="color:{status_color}; font-weight:bold;">{status}</span></p>
-        <p style="margin:4px 0;"><strong>ICAO24:</strong> {icao24}</p>
-        <p style="margin:4px 0;"><strong>Country:</strong> {aircraft['origin_country']}</p>
-        <p style="margin:4px 0;"><strong>Position:</strong> {lat}, {lon}</p>
-        <p style="margin:4px 0;"><strong>Altitude:</strong> {alt}</p>
-        <p style="margin:4px 0;"><strong>Speed:</strong> {spd}</p>
+        <h3 style="margin:0 0 8px 0;">Callsign: __CALLSIGN__</h3>
+        <p style="margin:4px 0;"><strong>Status:</strong> <span style="color:__STATUS_COLOR__; font-weight:bold;">__STATUS__</span></p>
+        <p style="margin:4px 0;"><strong>ICAO24:</strong> __ICAO24__</p>
+        <p style="margin:4px 0;"><strong>Country:</strong> __COUNTRY__</p>
+        <p style="margin:4px 0;"><strong>Position:</strong> __LAT__, __LON__</p>
+        <p style="margin:4px 0;"><strong>Altitude:</strong> __ALT__</p>
+        <p style="margin:4px 0;"><strong>Speed:</strong> __SPD__</p>
         <p style="margin:12px 0 4px 0;">
-            <a href="{fr24_link}" style="display:inline-block; padding:8px 14px; background:#f59e0b; color:white; text-decoration:none; border-radius:4px; font-weight:bold; margin-right:8px;">View on FlightRadar24</a>
-            <a href="{adsb_link}" style="display:inline-block; padding:8px 1
+            <a href="__FR24__" style="display:inline-block; padding:8px 14px; background:#f59e0b; color:white; text-decoration:none; border-radius:4px; font-weight:bold; margin-right:8px;">View on FlightRadar24</a>
+            <a href="__ADSB__" style="display:inline-block; padding:8px 14px; background:#3b82f6; color:white; text-decoration:none; border-radius:4px; font-weight:bold;">View on ADS-B Exchange</a>
+        </p>
+    </div>
+    """
+
+    html = html.replace("__CALLSIGN__", callsign)
+    html = html.replace("__STATUS_COLOR__", status_color)
+    html = html.replace("__STATUS__", status)
+    html = html.replace("__ICAO24__", icao24)
+    html = html.replace("__COUNTRY__", country)
+    html = html.replace("__LAT__", lat)
+    html = html.replace("__LON__", lon)
+    html = html.replace("__ALT__", alt)
+    html = html.replace("__SPD__", spd)
+    html = html.replace("__FR24__", fr24_link)
+    html = html.replace("__ADSB__", adsb_link)
+    return html
 
 
 def main():
