@@ -173,17 +173,22 @@ def format_aircraft_html(aircraft):
     status = "AIRBORNE" if aircraft['airborne'] else "ON GROUND"
     status_color = "#22c55e" if aircraft['airborne'] else "#ef4444"
 
+    icao24 = aircraft['icao24']
+    fr24_link = f"https://www.flightradar24.com/data/aircraft/{icao24}"
+    adsb_link = f"https://globe.adsbexchange.com/?icao={icao24}"
+
     return f"""
     <div style="border:1px solid #ddd; border-radius:8px; padding:16px; margin:8px 0; background:#f9f9f9;">
         <h3 style="margin:0 0 8px 0;">Callsign: {aircraft['callsign']}</h3>
         <p style="margin:4px 0;"><strong>Status:</strong> <span style="color:{status_color}; font-weight:bold;">{status}</span></p>
-        <p style="margin:4px 0;"><strong>ICAO24:</strong> {aircraft['icao24']}</p>
+        <p style="margin:4px 0;"><strong>ICAO24:</strong> {icao24}</p>
         <p style="margin:4px 0;"><strong>Country:</strong> {aircraft['origin_country']}</p>
         <p style="margin:4px 0;"><strong>Position:</strong> {lat}, {lon}</p>
         <p style="margin:4px 0;"><strong>Altitude:</strong> {alt}</p>
         <p style="margin:4px 0;"><strong>Speed:</strong> {spd}</p>
-    </div>
-    """
+        <p style="margin:12px 0 4px 0;">
+            <a href="{fr24_link}" style="display:inline-block; padding:8px 14px; background:#f59e0b; color:white; text-decoration:none; border-radius:4px; font-weight:bold; margin-right:8px;">View on FlightRadar24</a>
+            <a href="{adsb_link}" style="display:inline-block; padding:8px 1
 
 
 def main():
