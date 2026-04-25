@@ -34,16 +34,21 @@ STATE_FILE = "last_state.json"
 
 def fetch_opensky_states():
     """Fetch current aircraft state vectors from OpenSky Network (no API key needed)."""
+    import time
     url = "https://opensky-network.org/api/states/all"
     req = Request(url, headers={"User-Agent": "AntonovTracker/1.0"})
 
-    try:
-        with urlopen(req, timeout=30) as resp:
-            data = json.loads(resp.read().decode())
-            return data.get("states", [])
-    except (URLError, HTTPError) as e:
-        print(f"Error fetching OpenSky data: {e}")
-        return None
+    for attempt in range(3):
+        try:
+            with urlopen(req, timeout=45) as resp:
+                data = json.loads(resp.read().decode())
+                return data.get("states", [])
+        except (URLError, HTTPError) as e:
+            print(f"Attempt {attempt + 1}/3 failed: {e}")
+            if attempt < 2:
+                time.sleep(30)
+    print("All 3 attempts failed. Will retry next run.")
+    return None
 
 
 def find_antonov_aircraft(states):
